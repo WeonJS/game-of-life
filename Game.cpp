@@ -14,6 +14,9 @@ float cellSize = 10;
 bool paused = true;
 int iterations = 0;
 
+// the higher, the less frequent updates are
+int iterationsPerUpdate = 5;
+
 // Point struct, represents a location on the grid.
 struct Point {
     int x, y;
@@ -171,22 +174,32 @@ int main(void)
             DrawFPS(0, 40);
             DrawText(paused ? "PAUSED | |" : "", 0, 0, 28, BLACK);
             DrawText("space: pause", 0, 80, 20, BLACK);
-            DrawText("e: erase all cells", 0, 120, 20, BLACK);
-            DrawText("RMB drag: pan", 0, 160, 20, BLACK);
+            DrawText("e: erase all cells", 0, 100, 20, BLACK);
+            DrawText("RMB drag: pan", 0, 120, 20, BLACK);
+            DrawText("< and > arrows: increase/decrease speed", 0, 140, 20, BLACK);
 
             // if pressed space, toggle paused
-            if (IsKeyPressed(32)) {
+            if (IsKeyPressed(KEY_SPACE)) {
                 paused = !paused;
             }
 
             // if "e" pressed, kill all cells.
-            if (IsKeyPressed(69)) {
+            if (IsKeyPressed(KEY_E)) {
                 aliveCells.clear();
+            }
+
+            // adjusting speed
+            if (IsKeyPressed(KEY_LEFT)) { // left arrow
+                iterationsPerUpdate = iterationsPerUpdate <= 1 ? 1 : iterationsPerUpdate - 1;
+            }
+            else if (IsKeyPressed(KEY_RIGHT)) { // right arrow
+                
+                iterationsPerUpdate++;
             }
             
             // every 5 iterations, update game data.
             // if paused, stop drawing and continue from the top of loop.
-            if (paused || iterations++ % 5 != 0) {
+            if (paused || iterations++ % iterationsPerUpdate != 0) {
                 EndDrawing();
                 continue;
             }
